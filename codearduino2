@@ -1,0 +1,81 @@
+// C++ code 
+//
+const int merahKend = 13;
+const int kuningKend = 12;
+const int hijauKend = 11;
+const int merahKiri = 10;
+const int hijauKiri = 9;
+const int merahKanan = 8;
+const int hijauKanan = 7;
+const int tombol = 2;
+
+volatile bool flagTekan = false;
+
+void setup() {
+  for (int pin = 7; pin <= 13; pin++) {
+    pinMode(pin, OUTPUT);
+  }
+  pinMode(tombol, INPUT_PULLUP);
+
+  kondisiNormal();
+
+  attachInterrupt(digitalPinToInterrupt(tombol), ISR_tombol, FALLING);
+}
+
+void loop() {
+  if (flagTekan == true) {
+    modePenyeberangan();
+    flagTekan = false;
+  }
+}
+
+void ISR_tombol() {
+  flagTekan = true;
+}
+
+void kondisiNormal() {
+  digitalWrite(hijauKend, HIGH);
+  digitalWrite(merahKend, LOW);
+  digitalWrite(kuningKend, LOW);
+
+  setLampuPejalan(HIGH, LOW);
+}
+
+void setLampuPejalan(int merah, int hijau) {
+  digitalWrite(merahKiri, merah);
+  digitalWrite(merahKanan, merah);
+  digitalWrite(hijauKiri, hijau);
+  digitalWrite(hijauKanan, hijau);
+}
+
+void modePenyeberangan() {
+  digitalWrite(hijauKend, LOW);
+
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(kuningKend, HIGH);
+    delay(500);
+    digitalWrite(kuningKend, LOW);
+    delay(500);
+  }
+
+  digitalWrite(kuningKend, LOW);
+  
+  digitalWrite(merahKend, HIGH);
+
+  setLampuPejalan(LOW, HIGH);
+  delay(10000);
+
+  setLampuPejalan(HIGH, LOW);
+  delay(1000);
+
+  digitalWrite(merahKend, LOW);
+
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(kuningKend, HIGH);
+    delay(500);
+    digitalWrite(kuningKend, LOW);
+    delay(500);
+  }
+
+  kondisiNormal();
+}
